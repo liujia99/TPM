@@ -89,7 +89,7 @@ python main_vis.py --test --ckpts <path/to/pre-trained/model> --config cfgs/<MOD
 ```
 
 <div  align="center">    
- <img src="./assets/competion.png" width = "999"  align=center />
+ <img src="./assets/completion.png" width = "999"  align=center />
 </div>
 
 In addition, after converting the ```.ply``` file to a ```.obj``` file, we use **KeyShot** to render 3D point clouds to reflect the completion effect with the help of TPM.

@@ -1,7 +1,6 @@
 <div align="center">
 <h1>Triple Pont Masking</h1>
 
-
 [Jiaming Liu](https://scholar.google.com/citations?user=eQERdsAAAAAJ)<sup>1</sup>, [Linghe Kong](https://www.cs.sjtu.edu.cn/~linghe.kong/)<sup>1</sup>, [Yue Wu](https://ywuchina.github.io/)<sup>2✉</sup>, [Maoguo Gong](https://scholar.google.com/citations?user=D-TS1fAAAAAJ)<sup>2</sup> ,[Hao Li](https://scholar.google.com/citations?user=JkQmO-kAAAAJ)<sup>2</sup>, [Qiguang Miao](https://scholar.google.com/citations?user=2TQfvt8AAAAJ)<sup>2</sup>, [Wenping Ma](https://scholar.google.com/citations?user=I1pPv1QAAAAJ)<sup>2</sup>, [Can Qin](https://canqin.tech/)<sup>3</sup>
 
 <sup>1</sup>  Shanghai Jiao Tong University · <sup>2</sup>  Xidian University · <sup>3</sup>  Salesforce AI Research
@@ -29,16 +28,16 @@ Existing 3D mask learning methods encounter performance bottlenecks under limite
 Please refer to the baselines to set up the installation environment. [Point-MAE](https://github.com/Pang-Yatian/Point-MAE) is recommended:
 ```shell
 # Install basic required packages
-(dapt) $ pip install -r requirements.txt
+pip install -r requirements.txt
 
 # PointNet++
-(dapt) $ pip install "git+https://github.com/erikwijmans/Pointnet2_PyTorch.git#egg=pointnet2_ops&subdirectory=pointnet2_ops_lib"
+pip install "git+https://github.com/erikwijmans/Pointnet2_PyTorch.git#egg=pointnet2_ops&subdirectory=pointnet2_ops_lib"
 
 # GPU kNN
-(dapt) $ pip install --upgrade https://github.com/unlimblue/KNN_CUDA/releases/download/0.2/KNN_CUDA-0.2-py3-none-any.whl
+pip install --upgrade https://github.com/unlimblue/KNN_CUDA/releases/download/0.2/KNN_CUDA-0.2-py3-none-any.whl
 ```
 
-### Datasets
+### Baselines and datasets
 
 * For [Point-MAE](https://github.com/Pang-Yatian/Point-MAE), [Point-M2AE](https://github.com/ZrrSkywalker/Point-M2AE) and [PointGPT-S](https://github.com/CGuangyan-BIT/PointGPT), please see [DATASET.md](./DATASET.md) for details.
 
@@ -50,7 +49,7 @@ Please refer to the baselines to set up the installation environment. [Point-MAE
 
 First go to the folder of the baseline method and then execute the pre-training command. For example, Point-MAE:
 
-```
+```shell
 cd Point-MAE
 
 CUDA_VISIBLE_DEVICES=<GPU> python main.py --config cfgs/pretrain-tpm.yaml --exp_name <output_file_name>
@@ -61,13 +60,17 @@ CUDA_VISIBLE_DEVICES=<GPU> python main.py --config cfgs/pretrain-tpm.yaml --exp_
 ###  ModelNet40
 
 ```shell
+# 1k input
 CUDA_VISIBLE_DEVICES=<GPU> python main.py --config cfgs/finetune_modelnet.yaml --ckpts <path/to/pre-trained/model> --finetune_model --exp_name <name>
 
 # 8k input
 CUDA_VISIBLE_DEVICES=<GPU> python main.py --config cfgs/finetune_modelnet_8k.yaml --ckpts <path/to/pre-trained/model> --finetune_model --exp_name <name>
 
 # voting
-CUDA_VISIBLE_DEVICES=<GPU> python main.py --config cfgs/finetune_modelnet.yaml --test --vote --exp_name <name> --ckpts <path/to/best/model>
+CUDA_VISIBLE_DEVICES=<GPU> python main.py --config cfgs/finetune_modelnet.yaml --test --vote --ckpts <path/to/best/model> --exp_name <name>
+
+# few-shot learning
+CUDA_VISIBLE_DEVICES=<GPUs> python main.py --config cfgs/fewshot.yaml --finetune_model --ckpts <path/to/pre-trained/model> --exp_name <output_file_name> --way <5 or 10> --shot <10 or 20> --fold <0-9>
 ```
 
 ### ScanObjectNN
@@ -83,11 +86,19 @@ CUDA_VISIBLE_DEVICES=<GPU> python main.py --config cfgs/finetune_scan_objonly.ya
 CUDA_VISIBLE_DEVICES=<GPU> python main.py --config cfgs/finetune_scan_hardest.yaml --ckpts <path/to/pre-trained/model> --finetune_model --exp_name <name>
 ```
 
+### ShapeNetPart
+
+```shell
+cd segmentation
+
+python main.py --ckpts <path/to/pre-trained/model> --root path/to/data --learning_rate 0.0002 --epoch 300
+```
+
 ## Visualization
 Visulization of pre-trained model on validation set, please run:
 
-```
-python main_vis.py --test --ckpts <path/to/pre-trained/model> --config cfgs/<MODEL_NAME>/pretrain.yaml --exp_name <name>
+```shell
+python main_vis.py --config cfgs/pretrain.yaml --test --ckpts <path/to/pre-trained/model> --exp_name <name>
 ```
 
 <div  align="center">    
@@ -103,3 +114,15 @@ python main_vis.py --test --ckpts <path/to/pre-trained/model> --config cfgs/<MOD
 ## Acknowledgements
 
 This project is based on Point-MAE ([paper](https://arxiv.org/abs/2203.06604), [code](https://github.com/Pang-Yatian/Point-MAE)), Point-M2AE ([paper](https://proceedings.neurips.cc/paper_files/paper/2022/file/ad1d7a4df30a9c0c46b387815a774a84-Paper-Conference.pdf), [code](https://github.com/ZrrSkywalker/Point-M2AE)), Inter-MAE ([paper](https://ieeexplore.ieee.org/abstract/document/10262210), [code](https://github.com/ywuchina/TeamCode/tree/liujia99/Inter-MAE)), PointGPT ([paper](https://proceedings.neurips.cc/paper_files/paper/2023/file/5ed5c3c846f684a54975ad7a2525199f-Paper-Conference.pdf), [code](https://github.com/CGuangyan-BIT/PointGPT)). Thanks for their wonderful works.
+
+## Citation
+
+If you find this work useful in your research, please consider giving a star ⭐ and a citation
+```bibtex
+@article{liu2024triple,
+  title={Triple Point Masking},
+  author={Liu, Jiaming and Kong, Linghe and Wu, Yue and Gong, Maoguo and Li, Hao and Miao, Qiguang and Ma, Wenping and Qin, Can},
+  journal={arXiv preprint arXiv:2409.17547},
+  year={2024}
+}
+```
